@@ -16,8 +16,6 @@ export const Session = new mongoose.Schema({
     workspaceId: { type: mongoose.Schema.Types.ObjectId, ref: "Workspace", required: true },
 }, { timestamps: true });
 
-Workspace.index({ path: 1 });
-Session.index({ workspaceId: 1, createdAt: -1 });
 
 export const WorkspaceModel = mongoose.model("Workspace", Workspace);
 export const SessionModel = mongoose.model("Session", Session);

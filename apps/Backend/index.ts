@@ -10,8 +10,8 @@ server.on("connection", (ws) => {
     ws.on("message", async (msg) => {
         console.log(msg);
        await WorkspaceModel.create({
-            path: "C:\Users\nraj1\Desktop\AI Project\team-channel",
-            name: "coord"
+            path: "nishuHouse",
+            name: "team-channel"
         })
     })
 })

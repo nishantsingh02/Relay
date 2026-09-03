@@ -7,7 +7,7 @@
     "@types/bun": "latest"
   },
   "peerDependencies": {
-    "typescript": "^7"
+    "typescript": "^5"
   },
   "dependencies": {
     "@types/mongoose": "^5.11.97",
