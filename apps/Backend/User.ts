@@ -24,7 +24,7 @@ export class User {
 
           const workspace = await WorkspaceModel.create({
             path: data.path,
-            name: data.path.split("/").pop()
+            name: data.path.split("/").pop() ?? "untitled"
            })
 
            return {

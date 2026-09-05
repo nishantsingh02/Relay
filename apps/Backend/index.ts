@@ -1,14 +1,13 @@
 import {WebSocket, WebSocketServer} from "ws"
 import mongoose from "mongoose";
-import { Workspace, WorkspaceModel } from "db";
-import { CreateWorkspaceSchema } from "common";
+import { UserManager } from "./UserManager";
 
 mongoose.connect(process.env.DB_URL!)
 
 const server = new WebSocketServer({ port: 8080});
 
 server.on("connection", (ws) => {
-    UserManager.getInstance.adduser(ws);
+    UserManager.getInstance().addUser(ws);
 })
 
 

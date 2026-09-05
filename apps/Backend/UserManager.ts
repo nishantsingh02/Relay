@@ -1,6 +1,6 @@
 import { WebSocket } from "ws";
 import { User } from "./User";
-import { uuid } from "uuidv4";
+import { v4 as uuid } from "uuid";
 
 // interface User {
 //   socket: WebSocket;
