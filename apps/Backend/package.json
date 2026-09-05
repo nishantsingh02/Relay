@@ -12,8 +12,11 @@
   "dependencies": {
     "@types/mongoose": "^5.11.97",
     "@types/ws": "^8.18.1",
+    "common": "*",
     "db": "*",
     "mongoose": "^9.9.4",
+    "uuid": "^14.0.2",
+    "uuidv4": "^6.2.13",
     "ws": "^8.21.3"
   }
 }

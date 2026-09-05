@@ -10,7 +10,7 @@
     "@types/bun": "latest"
   },
   "peerDependencies": {
-    "typescript": "^7"
+    "typescript": "^5"
   },
   "dependencies": {
     "zod": "^4.5.4"
