@@ -36,7 +36,9 @@ export class UserManager {
     ws.on("message", async (msg) => {
       try {
         const parsedMessage = JSON.parse(msg.toString());
-        user.handleIncomingMessages(parsedMessage);
+        const responsePayload = await user.handleIncomingMessages(parsedMessage)
+        user.SendMessage(responsePayload)
+
       } catch (err) {
         console.error("User sent non JSON format input");
         console.log(err);

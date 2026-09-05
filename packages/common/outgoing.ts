@@ -1,10 +1,10 @@
 import z from "zod";
 
-export const WorksapceCreatedSchema = z.object({
+export const WorkspaceCreatedSchema = z.object({
   id: z.string(),
 });
 
-export type WorksapceCreatedSchemaType = z.infer<typeof WorksapceCreatedSchema>;
+export type WorkspaceCreatedSchemaType = z.infer<typeof WorkspaceCreatedSchema>;
 
 export const SessionCreatedSchema = z.object({
   id: z.string(),
@@ -19,6 +19,7 @@ export const MessageAdded = z.object({
 export type MessageAddedType = z.infer<typeof MessageAdded>;
 
 export type OutgoingMessagesType =
-  | { type: "worksapce-created"; payload: WorksapceCreatedSchemaType }
-  | { type: "session-createde"; payload: SessionCreatedSchemaType }
-  | { type: "message-added"; payload: MessageAddedType };
+  | { type: "workspace-created"; payload: WorkspaceCreatedSchemaType }
+  | { type: "session-created"; payload: SessionCreatedSchemaType }
+  | { type: "message-added"; payload: MessageAddedType }
+  | { type: "error"; payload: { message: string } };

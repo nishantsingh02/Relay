@@ -23,5 +23,5 @@ export type AddMessageSchemaType = z.infer<typeof AddMessageSchema>;
 
 export type IncomingMessageType =
   | { type: "create-session"; payload: CreateSessionSchemaType }
-  | { type: "create-worksapce"; payload: CreateWorkspaceSchemaType }
+  | { type: "create-workspace"; payload: CreateWorkspaceSchemaType }
   | { type: "add-message"; payload: AddMessageSchemaType };
