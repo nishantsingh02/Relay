@@ -23,7 +23,11 @@ export class User {
             path: data.path,
             name: data.path.split("/").pop() // got the last name on from the path
            })
-           
+
+           this.socket.send({
+            
+           })
+
         } else if (msg.type === "create-session") {
 
         } else {
