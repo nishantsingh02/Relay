@@ -23,3 +23,31 @@ export type OutgoingMessagesType =
   | { type: "session-created"; payload: SessionCreatedSchemaType }
   | { type: "message-added"; payload: MessageAddedType }
   | { type: "error"; payload: { message: string } };
+
+
+  // to get this on frontend ( the backend sends this to fr when a user connect)
+ export type ConnectionResponse = {
+    Workspaces: Workspace[]
+ }
+
+ type Workspace = {
+  id: string
+  name: string,
+  path: string,
+  session: Sessions[]
+ }
+
+ type Sessions = {
+  id: string,
+  messages: Message[]
+ }
+
+ type Message = {
+  role: "user",
+  payload: {
+    message: string
+  }
+ } | {
+  role: "assistent",
+  payload: any
+ }
