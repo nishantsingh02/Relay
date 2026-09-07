@@ -34,7 +34,7 @@ export type OutgoingMessagesType =
   id: string
   name: string,
   path: string,
-  session: Sessions[]
+  sessions: Sessions[]
  }
 
  type Sessions = {
@@ -48,6 +48,6 @@ export type OutgoingMessagesType =
     message: string
   }
  } | {
-  role: "assistent",
+  role: "assistant",
   payload: any
  }
