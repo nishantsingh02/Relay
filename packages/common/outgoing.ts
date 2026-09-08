@@ -35,10 +35,10 @@ export type OutgoingMessagesType =
   id: string
   name: string,
   path: string,
-  sessions: Sessions[]
+  sessions: Session[]
  }
 
- type Sessions = {
+ export type Session = {
   id: string,
   messages: Message[]
  }
