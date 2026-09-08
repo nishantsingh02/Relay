@@ -12,6 +12,10 @@ export const Workspace = new mongoose.Schema({
 // });
 
 export const Session = new mongoose.Schema({
+    role: {
+        type: "string",
+        enum: ["user" , "assistant"]
+    },
     conversation: [Object],
     workspaceId: { type: mongoose.Schema.Types.ObjectId, ref: "Workspace", required: true },
 }, { timestamps: true });
