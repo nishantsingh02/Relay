@@ -1,6 +1,8 @@
 import { WebSocket } from "ws";
 import { User } from "./User";
 import { v4 as uuid } from "uuid";
+import { SessionModel, WorkspaceModel } from "db";
+import type { Workspace } from "common";
 
 // interface User {
 //   socket: WebSocket;
@@ -28,10 +30,41 @@ export class UserManager {
   }
 
   // methord addUser This addUser method does two things: Takes a WebSocket connection as a parameter ,Pushes it into the users array wrapped in an object
-  addUser(ws: WebSocket) {
+  async addUser(ws: WebSocket) {
     const id = uuid();
     const user = new User(id, ws); 
     this.users.push(user);
+
+    const workspaces = await WorkspaceModel.find()
+    const sessions = await SessionModel.find()
+
+    const response: Workspace[] = [];
+
+    // now i am trying to itrater over all the iteration
+
+    workspaces.forEach(w => {
+      const sessions = [];
+      response.push({
+        id: w._id.toString(),
+        name: w.name,
+        path: w.path,
+        sessions: []
+      })
+      sessions.forEach(s => {
+        if(s.workspaceId === w._id) {
+          sessions.push({
+            id: s._id.toString(),
+            conversation: []
+          })
+        }
+      })
+
+    })
+
+    ws.send(JSON.stringify({
+      type: "init",
+      Workspace: response
+    }))
 
     ws.on("message", async (msg) => {
       try {

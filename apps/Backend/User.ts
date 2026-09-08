@@ -7,7 +7,7 @@ export class User {
     public id: string; // every user have there own uuid
 
     constructor(id: string, socket: WebSocket) {
-        this.socket = socket;
+        this.socket = socket; // (ws) saves the WS connection to this instance
         this.id = id
     }
 
@@ -71,4 +71,5 @@ export class User {
             };
         }
     }
+
 }
