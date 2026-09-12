@@ -49,7 +49,7 @@ export class UserManager {
         if (s.workspaceId === w._id) { // if equal, that session belongs to that workspace
           finalSessions.push({
             id: s._id.toString(),
-            messages: s.messages,
+            messages: s.message,
           });
         }
       });
@@ -66,7 +66,7 @@ export class UserManager {
     ws.send(
       JSON.stringify({
         type: "init",
-        Workspace: response,
+        Workspaces: response,
       }),
     );
 

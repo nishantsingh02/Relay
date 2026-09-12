@@ -20,3 +20,6 @@ export default function useSocket() {
         loading
     }
 }
+
+
+// this hook manages the WebSocket connection to your backend.
