@@ -1,23 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "../App.css"
 
+// export default function useSocket() {
+//     const [ws, setWs] = useState(new WebSocket("ws://localhost:8080"))
+//     const [loading, setLoading] = useState(true)
+
+//     useEffect(() => {
+//         ws.onopen = () => {
+//             if(ws){
+//                 setWs(ws)
+//                 setLoading(false)
+//             }
+//         }
+//     }, [ws])
+
+//     return {
+//         socket: ws,
+//         loading
+//     }
+// }
+
 export default function useSocket() {
-    const [ws, setWs] = useState(new WebSocket("ws://localhost:8080"))
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
+    const wsRef = useRef<WebSocket | null>(null);
+
+    if (!wsRef.current) {
+        wsRef.current = new WebSocket("ws://localhost:8080");
+    }
 
     useEffect(() => {
-        ws.onopen = () => {
-            if(ws){
-                setWs(ws)
-                setLoading(false)
-            }
-        }
-    }, [ws])
+        const ws = wsRef.current!;
+        ws.onopen = () => setLoading(false);
+    }, []);
 
-    return {
-        socket: ws,
-        loading
-    }
+    return { socket: wsRef.current, loading };
 }
 
 
