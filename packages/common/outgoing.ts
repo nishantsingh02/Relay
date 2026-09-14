@@ -1,7 +1,10 @@
+// Backend -> Frontend
 import z from "zod";
 
 export const WorkspaceCreatedSchema = z.object({
   id: z.string(),
+  name: z.string(),
+  path: z.string()
 });
 
 export type WorkspaceCreatedSchemaType = z.infer<typeof WorkspaceCreatedSchema>;

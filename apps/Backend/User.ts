@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import { CreateSessionSchema, CreateWorkspaceSchema, AddMessageSchema, type IncomingMessageType, type OutgoingMessagesType } from "common"
 import { SessionModel, WorkspaceModel } from "db";
+import mongoose from "mongoose";
 
 export class User {
     private socket: WebSocket;
@@ -22,14 +23,14 @@ export class User {
             return { type: "error", payload: { message: "Invalid workspace data" } };
            }
 
-          const workspace = await WorkspaceModel.create({
+           const workspace = await WorkspaceModel.create({
             path: data.path,
-            name: data.path.split("/").pop() ?? "untitled"
+            name: data.path.split(/[\\/]/).pop() ?? "untitled"
            })
 
            return {
             type: "workspace-created",
-            payload: { id: workspace._id.toString() }
+            payload: { id: workspace._id.toString(), path: workspace.path, name: workspace.name }
            }
 
         } else if (msg.type === "create-session") {
@@ -39,7 +40,7 @@ export class User {
             }
 
             const session = await SessionModel.create({
-                workspaceId: data.workspaceId,
+                workspaceId: new mongoose.Types.ObjectId(data.workspaceId),
                 conversation: []
             })
 
@@ -49,25 +50,25 @@ export class User {
             }
 
         } else {
-            // when msg.type === "message-added"
+            // msg.type === "add-message"
             const { success, data } = AddMessageSchema.safeParse(msg.payload);
             if (!success) {
                 return { type: "error", payload: { message: "Invalid message data" } };
             }
 
-            const workspace = await SessionModel.updateOne({
-                $where: {
-                    id: data.sessionId
-                }
-            }, {
-                conversation: {
-                    $push: { type: "user" , payload: { message:  data.message }}
-                }
-            })
+            const session = await SessionModel.findByIdAndUpdate(
+                data.sessionId,
+                { $push: { conversation: { role: "user", content: data.message } } },
+                { new: true }
+            );
+
+            if (!session) {
+                return { type: "error", payload: { message: "Session not found" } };
+            }
 
             return {
                 type: "message-added",
-                payload: { id: "1" }
+                payload: { id: session._id.toString() }
             };
         }
     }

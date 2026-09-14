@@ -2,9 +2,11 @@ import type { Workspace } from "common"
 import { createContext } from "react"
 
 export const AppContext = createContext<{
-    worksapces: Workspace[],
-    socket: WebSocket | null
+    workspaces: Workspace[],
+    socket: WebSocket | null,
+    setWorkspaces: any
 }>({
-    worksapces: [],
-    socket: null
+    workspaces: [],
+    socket: null,
+    setWorkspaces: null
 })
