@@ -1,26 +1,27 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useContext } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Send, User, Bot } from "lucide-react"
-import type { useSocket } from "@/hooks/useSocket"
+import { AppContext } from "@/context/AppContext"
 
 interface Message {
   role: "user" | "assistant" | "system"
   content: string
 }
 
-interface ChatPanelProps {
-  sessionId: string | null
-  send: ReturnType<typeof useSocket>["send"]
-  on: ReturnType<typeof useSocket>["on"]
-}
-
-export function ChatPanel({ sessionId, send, on }: ChatPanelProps) {
-  const [messages, setMessages] = useState<Message[]>([])
+export function ChatPanel() {
+  const { workspaces, selectedWorkspaceId, selectedSessionId, send } = useContext(AppContext)
   const [input, setInput] = useState("")
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  const activeWorkspace = workspaces.find((w) => w.id === selectedWorkspaceId)
+  const activeSession = activeWorkspace?.sessions.find((s) => s.id === selectedSessionId)
+
+  const messages: Message[] = activeSession?.messages.map((m) => ({
+    role: m.role as "user" | "assistant",
+    content: typeof m.content === "string" ? m.content : JSON.stringify(m.content),
+  })) || []
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -28,32 +29,14 @@ export function ChatPanel({ sessionId, send, on }: ChatPanelProps) {
     }
   }, [messages])
 
-  useEffect(() => {
-    if (!sessionId) return
-
-    setMessages([])
-    const unsub = on("message-added", () => {})
-    const unsubErr = on("error", (msg) => {
-      if (msg.type === "error") {
-        setMessages((prev) => [...prev, { role: "system", content: msg.payload.message }])
-      }
-    })
-
-    return () => {
-      unsub()
-      unsubErr()
-    }
-  }, [sessionId, on])
-
   const sendMessage = () => {
-    if (!input.trim() || !sessionId) return
+    if (!input.trim() || !selectedSessionId) return
 
-    setMessages((prev) => [...prev, { role: "user", content: input }])
-    send({ type: "add-message", payload: { sessionId, message: input } })
+    send({ type: "add-message", payload: { sessionId: selectedSessionId, message: input } })
     setInput("")
   }
 
-  if (!sessionId) {
+  if (!selectedSessionId) {
     return (
       <div className="flex items-center justify-center h-full text-muted-foreground">
         Select a session to start chatting
@@ -62,14 +45,14 @@ export function ChatPanel({ sessionId, send, on }: ChatPanelProps) {
   }
 
   return (
-    <Card className="flex flex-col h-full border-0 rounded-none">
-      <CardHeader className="p-4 border-b">
-        <CardTitle className="text-sm font-medium">
-          Session: {sessionId.slice(0, 8)}...
-        </CardTitle>
-      </CardHeader>
+    <div className="flex flex-col h-full">
+      <div className="p-4 border-b border-border">
+        <p className="text-sm font-medium">
+          Session: {selectedSessionId.startsWith("temp-") ? "Creating..." : selectedSessionId.slice(0, 8) + "..."}
+        </p>
+      </div>
 
-      <CardContent className="flex-1 p-0 overflow-hidden">
+      <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div ref={scrollRef} className="p-4 space-y-4">
             {messages.length === 0 && (
@@ -88,8 +71,6 @@ export function ChatPanel({ sessionId, send, on }: ChatPanelProps) {
                   className={`rounded-lg px-3 py-2 max-w-[80%] text-sm ${
                     msg.role === "user"
                       ? "bg-primary text-primary-foreground"
-                      : msg.role === "system"
-                      ? "bg-muted text-muted-foreground"
                       : "bg-muted"
                   }`}
                 >
@@ -104,9 +85,9 @@ export function ChatPanel({ sessionId, send, on }: ChatPanelProps) {
             ))}
           </div>
         </ScrollArea>
-      </CardContent>
+      </div>
 
-      <div className="p-4 border-t">
+      <div className="p-4 border-t border-border">
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -125,6 +106,6 @@ export function ChatPanel({ sessionId, send, on }: ChatPanelProps) {
           </Button>
         </form>
       </div>
-    </Card>
+    </div>
   )
 }
