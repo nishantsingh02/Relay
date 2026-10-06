@@ -17,9 +17,19 @@ export type SessionCreatedSchemaType = z.infer<typeof SessionCreatedSchema>;
 
 export const MessageAdded = z.object({
   id: z.string(),
+  message: z.string().optional(),
 });
 
 export type MessageAddedType = z.infer<typeof MessageAdded>;
+
+export const AssistantMessageSchema = z.object({
+  sessionId: z.string(),
+  content: z.string(),
+  id: z.string().optional(),
+});
+
+export type AssistantMessageType = z.infer<typeof AssistantMessageSchema>;
+
 
 export type OutgoingMessagesType =
   | { type: "workspace-created"; payload: WorkspaceCreatedSchemaType }
@@ -27,12 +37,8 @@ export type OutgoingMessagesType =
   | { type: "message-added"; payload: MessageAddedType }
   | { type: "error"; payload: { message: string } }
   | { type: "init"; payload: { Workspaces: Workspace[] }}
+  | { type: "assistant-message"; payload: AssistantMessageType }
 
-
-//   // to get this on frontend ( the backend sends this to fr when a user connect)
-//  export type ConnectionResponse = {
-//     Workspaces: Workspace[]
-//  }
 
  export type Workspace = {
   id: string
@@ -46,13 +52,11 @@ export type OutgoingMessagesType =
   messages: Message[]
  }
 
- type Message = {
-  id: string,
-  role: "user",
-  payload: {
+ export type Message = {
+  id?: string,
+  role: "user" | "assistant" | "system",
+  content?: string,
+  payload?: {
     message: string
   }
- } | {
-  role: "assistant",
-  payload: any
  }

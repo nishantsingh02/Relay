@@ -55,6 +55,7 @@ function App() {
       const unsubInit = on("init", (msg) => {
         setWorkspaces(msg.Workspaces);
       });
+      
 
       const unsubWsCreated = on("workspace-created", (msg) => {
         setWorkspaces((prev) =>
@@ -96,7 +97,7 @@ function App() {
                         {
                           id: msg.payload.id ?? crypto.randomUUID(),
                           role: "user",
-                          payload: { message: msg.payload.message },
+                          content: msg.payload.message,
                         },
                       ],
                     };
@@ -110,6 +111,36 @@ function App() {
         );
       });
 
+      const unsubAssistantMsg = on("assistant-message", (msg) => {
+        const { sessionId, content } = msg.payload;
+        setWorkspaces((prev) =>
+          prev.map((w) => {
+            const hasSession = w.sessions.some((s) => s.id === sessionId);
+            if (!hasSession) return w;
+
+            return {
+              ...w,
+              sessions: w.sessions.map((s) => {
+                if (s.id === sessionId) {
+                  return {
+                    ...s,
+                    messages: [
+                      ...s.messages,
+                      {
+                        id: msg.payload.id ?? crypto.randomUUID(),
+                        role: "assistant",
+                        content: content,
+                      },
+                    ],
+                  };
+                }
+                return s;
+              }),
+            };
+          })
+        );
+      });
+
       const unsubError = on("error", (msg) => {
         console.error("Server error:", msg.payload.message);
       });
@@ -119,6 +150,7 @@ function App() {
         unsubWsCreated();
         unsubSessionCreated();
         unsubMsgAdded();
+        unsubAssistantMsg();
         unsubError();
       };
     }

@@ -18,10 +18,14 @@ export function ChatPanel() {
   const activeWorkspace = workspaces.find((w) => w.id === selectedWorkspaceId)
   const activeSession = activeWorkspace?.sessions.find((s) => s.id === selectedSessionId)
 
-  const messages: Message[] = activeSession?.messages.map((m) => ({
-    role: m.role as "user" | "assistant",
-    content: typeof m.content === "string" ? m.content : JSON.stringify(m.content),
-  })) || []
+  const messages: Message[] =
+    activeSession?.messages.map((m: any) => ({
+      role: m.role as "user" | "assistant",
+      content:
+        typeof m.content === "string"
+          ? m.content
+          : m.payload?.message ?? (m.content ? JSON.stringify(m.content) : ""),
+    })) || []
 
   useEffect(() => {
     if (scrollRef.current) {

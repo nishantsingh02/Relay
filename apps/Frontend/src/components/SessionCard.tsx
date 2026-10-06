@@ -12,7 +12,7 @@ interface SessionCardProps {
 
 const statusConfig = {
   running: { icon: Loader, color: "text-blue-500", badge: "default" as const, label: "Running" },
-  done: { icon: CheckCircle, color: "text-green-500", badge: "success" as const, label: "Done" },
+  done: { icon: CheckCircle, color: "text-green-500", badge: "secondary" as const, label: "Done" },
   error: { icon: AlertCircle, color: "text-red-500", badge: "destructive" as const, label: "Error" },
 }
 

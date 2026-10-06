@@ -46,10 +46,10 @@ export class UserManager {
       const finalSessions: Session[] = [];
 
       sessions.forEach((s) => {
-        if (s.workspaceId === w._id) { // if equal, that session belongs to that workspace
+        if (s.workspaceId?.toString() === w._id.toString()) { // if equal, that session belongs to that workspace
           finalSessions.push({
             id: s._id.toString(),
-            messages: s.message,
+            messages: (s as any).conversation || [],
           });
         }
       });
@@ -71,14 +71,24 @@ export class UserManager {
     );
 
     ws.on("message", async (msg) => {
+      let parsedMessage;
       try {
-        const parsedMessage = JSON.parse(msg.toString());
+        parsedMessage = JSON.parse(msg.toString());
+      } catch (err) {
+        console.error("User sent non JSON format input:", err);
+        return;
+      }
+
+      try {
         const responsePayload =
           await user.handleIncomingMessages(parsedMessage);
         user.SendMessage(responsePayload);
-      } catch (err) {
-        console.error("User sent non JSON format input");
-        console.log(err);
+      } catch (err: any) {
+        console.error("Error processing message:", err);
+        user.SendMessage({
+          type: "error",
+          payload: { message: err?.message || "Internal server error" },
+        });
       }
     });
 
